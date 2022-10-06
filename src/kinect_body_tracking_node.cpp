@@ -8,6 +8,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/Pose.h>
+#include <tf/transform_broadcaster.h>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -40,6 +41,8 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     ros::Publisher goal_pub = nh.advertise<move_base_msgs::MoveBaseGoal>("person_location", 1000);
 
+    tf::TransformBroadcaster broadcaster;
+
     // MoveBaseClient ac("move_base", true);
 
     // // wait for the action server to come up
@@ -68,12 +71,24 @@ int main(int argc, char** argv) {
         goal.target_pose.pose.orientation.w = orientation[3];
 
         goal_pub.publish(goal);
+
+        // transform.translation.x = position[0];
+        // transform.translation.y = position[1];
+        // transform.translation.z = position[2];
+
+        // transform.rotation.x = orientation[0];
+        // transform.rotation.y = orientation[1];
+        // transform.rotation.z = orientation[2];
+        // transform.rotation.w = orientation[3];
+
+        broadcaster.sendTransform(
+                              tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
+                                                   ros::Time::now(), 
+                                                   "camera", 
+                                                   "person"));
+
         // ac.sendGoal(goal);
         // ac.waitForResult();
-        // ROS_INFO("x: %.3f\n", goal.target_pose.pose.position.x);
-        // ROS_INFO("y: %.3f\n", goal.target_pose.pose.position.y);
-        // ROS_INFO("z: %.3f\n\n", goal.target_pose.pose.position.z);
-
         loop_rate.sleep();
     }
 
