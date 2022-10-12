@@ -14,6 +14,7 @@ find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Ceres REQUIRED)
 find_package( Boost REQUIRED COMPONENTS program_options)
+find_package(Eigen3 REQUIRED)
 
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
@@ -119,9 +120,11 @@ include_directories(
  include
  kinect_hallway/src/libkinectwrapper/include
  ${catkin_INCLUDE_DIRS}
+ ${OpenCV_INCLUDE_DIR}
+ ${EIGEN3_INCLUDE_DIR}
 )
 
-link_directories(/usr/lib kinect_hallway/build/src/libkinectwrapper)
+link_directories(/usr/lib kinect_hallway/build/src/libkinectwrapper kinect_hallway/build/share/apriltag/build)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -203,6 +206,10 @@ add_executable(${PROJECT_NAME}_node src/kinect_body_tracking_node.cpp)
 # )
 
 install(DIRECTORY kinect_hallway/build/src/libkinectwrapper/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.so"
+)
+install(DIRECTORY kinect_hallway/build/share/apriltag/build/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.so"
 )

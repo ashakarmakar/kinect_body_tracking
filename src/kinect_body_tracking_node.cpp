@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
         broadcaster.sendTransform(
                               tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
                                                    ros::Time::now(), 
-                                                   "camera", 
+                                                   "map", 
                                                    "person"));
 
         // ac.sendGoal(goal);
