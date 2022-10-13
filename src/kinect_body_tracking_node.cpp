@@ -5,10 +5,13 @@
 #include "MKPComputeGoal.h"
 #include "DepthViewer.h"
 #include <ros/ros.h>
-#include <move_base_msgs/MoveBaseAction.h>
-#include <actionlib/client/simple_action_client.h>
-#include <geometry_msgs/Pose.h>
 #include <tf/transform_broadcaster.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <move_base_msgs/MoveBaseGoal.h>
+#include <actionlib/client/simple_action_client.h>
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Quaternion.h>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -43,15 +46,15 @@ int main(int argc, char** argv) {
 
     tf::TransformBroadcaster broadcaster;
 
-    // MoveBaseClient ac("move_base", true);
+    MoveBaseClient ac("/move_base/move", true);
 
-    // // wait for the action server to come up
-    // while(!ac.waitForServer(ros::Duration(5.0))){
-    //     ROS_INFO("Waiting for the move_base action server to come up");
-    // }
+    // wait for the action server to come up
+    while(!ac.waitForServer(ros::Duration(5.0))){
+        ROS_INFO("Waiting for the move_base action server to come up");
+    }
 
     move_base_msgs::MoveBaseGoal goal;
-
+    geometry_msgs::PoseStamped pose;
 
     ros::Rate loop_rate(15);
     while (ros::ok()) {
@@ -61,34 +64,25 @@ int main(int argc, char** argv) {
         float* position = compute_goal.getPosition();
         float* orientation = compute_goal.getOrientation();
 
-        goal.target_pose.pose.position.x = position[0];
-        goal.target_pose.pose.position.y = position[1];
-        goal.target_pose.pose.position.z = position[2];
+        pose.pose.position.x = position[0];
+        pose.pose.position.y = position[1];
+        pose.pose.position.z = position[2];
 
-        goal.target_pose.pose.orientation.x = orientation[0];
-        goal.target_pose.pose.orientation.y = orientation[1];
-        goal.target_pose.pose.orientation.z = orientation[2];
-        goal.target_pose.pose.orientation.w = orientation[3];
+        pose.pose.orientation.x = orientation[0];
+        pose.pose.orientation.y = orientation[1];
+        pose.pose.orientation.z = orientation[2];
+        pose.pose.orientation.w = orientation[3];
 
-        goal_pub.publish(goal);
+        goal.target_pose = pose;
 
-        // transform.translation.x = position[0];
-        // transform.translation.y = position[1];
-        // transform.translation.z = position[2];
+        // broadcaster.sendTransform(
+        //                       tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
+        //                                            ros::Time::now(), 
+        //                                            "map", 
+        //                                            "person"));
 
-        // transform.rotation.x = orientation[0];
-        // transform.rotation.y = orientation[1];
-        // transform.rotation.z = orientation[2];
-        // transform.rotation.w = orientation[3];
-
-        broadcaster.sendTransform(
-                              tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
-                                                   ros::Time::now(), 
-                                                   "map", 
-                                                   "person"));
-
-        // ac.sendGoal(goal);
-        // ac.waitForResult();
+        ac.sendGoal(goal);
+        ac.waitForResult();
         loop_rate.sleep();
     }
 
