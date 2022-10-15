@@ -29,14 +29,14 @@ int main(int argc, char** argv) {
 
     /* 2. Goal Computer: will create a movebase goal based on the joint data */
     MKPComputeGoal compute_goal(wrapper);
-    split.addRecipient(&compute_goal);
+    person_tracker.addRecipient(&compute_goal);
 
     /* DepthViewer for visualizing the body tracking */
-    std::vector<Eigen::MatrixXd> vec;
-    const Eigen::Matrix4d identity = Eigen::Matrix4d::Identity();
-    vec.push_back(identity);
-    MultiDepthViewer depth_viewer(vec);
-    split.addRecipient(&depth_viewer);
+    // std::vector<Eigen::MatrixXd> vec;
+    // const Eigen::Matrix4d identity = Eigen::Matrix4d::Identity();
+    // vec.push_back(identity);
+    // MultiDepthViewer depth_viewer(vec);
+    // split.addRecipient(&depth_viewer);
 
     /* TODO: send a movebase goal over ros */
 
@@ -44,14 +44,14 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     ros::Publisher goal_pub = nh.advertise<move_base_msgs::MoveBaseGoal>("person_location", 1000);
 
-    tf::TransformBroadcaster broadcaster;
+    // tf::TransformBroadcaster broadcaster;
 
-    MoveBaseClient ac("/move_base/move", true);
+    // MoveBaseClient ac("/move_base/move", true);
 
-    // wait for the action server to come up
-    while(!ac.waitForServer(ros::Duration(5.0))){
-        ROS_INFO("Waiting for the move_base action server to come up");
-    }
+    // // wait for the action server to come up
+    // while(!ac.waitForServer(ros::Duration(5.0))){
+    //     ROS_INFO("Waiting for the move_base action server to come up");
+    // }
 
     move_base_msgs::MoveBaseGoal goal;
     geometry_msgs::PoseStamped pose;
@@ -61,19 +61,19 @@ int main(int argc, char** argv) {
         wrapper.doOnce();
         ros::spinOnce();
 
-        float* position = compute_goal.getPosition();
-        float* orientation = compute_goal.getOrientation();
+        // float* position = compute_goal.getPosition();
+        // float* orientation = compute_goal.getOrientation();
 
-        pose.pose.position.x = position[0];
-        pose.pose.position.y = position[1];
-        pose.pose.position.z = position[2];
+        // pose.pose.position.x = position[0];
+        // pose.pose.position.y = position[1];
+        // pose.pose.position.z = position[2];
 
-        pose.pose.orientation.x = orientation[0];
-        pose.pose.orientation.y = orientation[1];
-        pose.pose.orientation.z = orientation[2];
-        pose.pose.orientation.w = orientation[3];
+        // pose.pose.orientation.x = orientation[0];
+        // pose.pose.orientation.y = orientation[1];
+        // pose.pose.orientation.z = orientation[2];
+        // pose.pose.orientation.w = orientation[3];
 
-        goal.target_pose = pose;
+        // goal.target_pose = pose;
 
         // broadcaster.sendTransform(
         //                       tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
@@ -81,8 +81,8 @@ int main(int argc, char** argv) {
         //                                            "map", 
         //                                            "person"));
 
-        ac.sendGoal(goal);
-        ac.waitForResult();
+        // ac.sendGoal(goal);
+        // ac.waitForResult();
         loop_rate.sleep();
     }
 
