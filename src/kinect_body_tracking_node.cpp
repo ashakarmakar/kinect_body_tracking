@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
     /* 2. Goal Computer: will create a movebase goal based on the joint data */
     MKPComputeGoal compute_goal(wrapper);
-    person_tracker.addRecipient(&compute_goal);
+    split.addRecipient(&compute_goal);
 
     /* DepthViewer for visualizing the body tracking */
     // std::vector<Eigen::MatrixXd> vec;
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     ros::Publisher goal_pub = nh.advertise<move_base_msgs::MoveBaseGoal>("person_location", 1000);
 
-    // tf::TransformBroadcaster broadcaster;
+    tf::TransformBroadcaster broadcaster;
 
     // MoveBaseClient ac("/move_base/move", true);
 
@@ -64,22 +64,43 @@ int main(int argc, char** argv) {
         // float* position = compute_goal.getPosition();
         // float* orientation = compute_goal.getOrientation();
 
-        // pose.pose.position.x = position[0];
-        // pose.pose.position.y = position[1];
-        // pose.pose.position.z = position[2];
+        // pose.pose[i]->position.x = position[0];
+        // pose.pose[i]->position.y = position[1];
+        // pose.pose[i]->position.z = position[2];
 
-        // pose.pose.orientation.x = orientation[0];
-        // pose.pose.orientation.y = orientation[1];
-        // pose.pose.orientation.z = orientation[2];
-        // pose.pose.orientation.w = orientation[3];
+        // pose.pose->orientation.x = orientation[0];
+        // pose.pose->orientation.y = orientation[1];
+        // pose.pose->orientation.z = orientation[2];
+        // pose.pose->orientation.w = orientation[3];
 
         // goal.target_pose = pose;
 
-        // broadcaster.sendTransform(
-        //                       tf::StampedTransform(tf::Transform(tf::Quaternion(orientation[0], orientation[1], orientation[2], orientation[3]), tf::Vector3(position[0], position[1], position[2])), 
-        //                                            ros::Time::now(), 
-        //                                            "map", 
-        //                                            "person"));
+        // printf("body 0: position x: %.7f\n", compute_goal.bodies[0]->position.x);
+        // printf("body 1: position x: %.7f\n", compute_goal.bodies[1]->position.x);
+
+
+        // ROS_INFO("number of bodies: %d\n", compute_goal.getNumBodies());
+        //printf("NODE: body %d x: %.5f\n", i, compute_goal.bodies[i]->x);
+
+        // MKPComputeGoal::Pose** tempBodies = compute_goal.bodies;
+        printf("NODE: body %d x ptr: %p\n", 0, compute_goal.bodies[0]);
+        printf("NODE: body %d x ptr: %p\n", 1, compute_goal.bodies[1]);
+
+        for (int i = 0; i < compute_goal.getNumBodies(); i++) {
+            // ROS_INFO("body %d: position y: %.3f\n", i, compute_goal.bodies[i]->position.y);
+            // ROS_INFO("body %d: position z: %.3f\n", i, compute_goal.bodies[i]->position.z);
+
+        //     broadcaster.sendTransform( 
+        //             tf::StampedTransform(tf::Transform(tf::Quaternion(compute_goal.bodies[i]->orientation.x, compute_goal.bodies[i]->orientation.y, 
+        //                                                                 compute_goal.bodies[i]->orientation.z, compute_goal.bodies[i]->orientation.w), 
+        //                                                 tf::Vector3(compute_goal.bodies[i]->position.x, compute_goal.bodies[i]->position.y, compute_goal.bodies[i]->position.z)), 
+        //                                                 ros::Time::now(), "map", "line_person  "+ i));
+
+        }
+
+        // Pose** bodies = compute_goal.getBodies();
+
+
 
         // ac.sendGoal(goal);
         // ac.waitForResult();
