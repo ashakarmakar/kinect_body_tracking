@@ -85,6 +85,10 @@
         "queue": "cpp",
         "stack": "cpp",
         "core": "cpp",
-        "specialfunctions": "cpp"
+        "specialfunctions": "cpp",
+        "shared_mutex": "cpp",
+        "variant": "cpp",
+        "bit": "cpp",
+        "*.ipp": "cpp"
     }
 }

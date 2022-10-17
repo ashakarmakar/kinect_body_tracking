@@ -7,7 +7,7 @@ project(kinect_body_tracking)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS move_base_msgs actionlib roscpp geometry_msgs tf)
+find_package(catkin REQUIRED COMPONENTS move_base_msgs actionlib roscpp geometry_msgs tf message_generation)
 
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
@@ -106,7 +106,7 @@ pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES kinect_body_tracking
-#  CATKIN_DEPENDS other_catkin_pkg
+   CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 
